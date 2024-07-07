@@ -58,7 +58,7 @@ pub fn control_vm_t(free_qmp_port_num: u16) {
         let sync_value = &tcp_socket as *const _ as usize as i32;
         if let Err(e) = qga.guest_sync(sync_value) {
           eprintln!("Handshake failed: {:?}", e);
-          continue;
+          //continue;
         }
 
         let info = qga.execute(&qapi::qga::guest_info { }).unwrap();
