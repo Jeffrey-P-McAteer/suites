@@ -21,6 +21,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
+name = "port_scanner"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "325a6d2ac5dee293c3b2612d4993b98aec1dff096b0a2dae70ed7d95784a05da"
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -36,6 +42,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c6412bdd014ebee03ddbbe79ac03a0b622cce4d80ba45254f6357c847f06fa38"
 dependencies = [
  "log",
+ "qapi-qga",
  "qapi-qmp",
  "qapi-spec",
  "serde",
@@ -59,6 +66,17 @@ checksum = "80044db145aa2953ef5803d0376dcbca50f2763242547e856b7f37507adca677"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "qapi-qga"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c54b6cbbc1b102dfebad74155799d7d96eeb3654eb311f330d6ff8c3177933e"
+dependencies = [
+ "qapi-codegen",
+ "qapi-spec",
+ "serde",
 ]
 
 [[package]]
@@ -133,6 +151,7 @@ dependencies = [
 name = "suites"
 version = "0.1.0"
 dependencies = [
+ "port_scanner",
  "qapi",
 ]
 

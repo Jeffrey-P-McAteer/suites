@@ -9,6 +9,6 @@ authors = [
 
 
 [dependencies]
-qapi = { version = "0.14", features = [ "qmp" ] }
-
+port_scanner = "0.1"
+qapi = { version = "0.14", features = [ "qmp", "qapi-qga" ] }
 
