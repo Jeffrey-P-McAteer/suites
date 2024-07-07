@@ -9,13 +9,6 @@ authors = [
 
 
 [dependencies]
-#tray-icon = "0.14"
-#ocrs = "0.8"
-
-#[dependencies.scap]
-#version = "0.0.5"
-#git = "https://github.com/helmerapp/scap.git"
-#git = "https://github.com/MAlba124/scap.git" # TODO swap me back when merged upstream
-
+qapi = { version = "0.14", features = [ "qmp" ] }
 
 

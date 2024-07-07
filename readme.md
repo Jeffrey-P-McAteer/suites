@@ -4,6 +4,12 @@
 `suites` is a linux & windows application that performs automation of graphical user interface tasks.
 
 
+# OS Runtime Dependencies
+
+ - Linux
+    - `gtk3 xdotool libappindicator-gtk3`
+
+
 
 # Research / exploration ideas
 
