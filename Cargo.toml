@@ -1,0 +1,21 @@
+[package]
+name = "suites"
+version = "0.1.0"
+edition = "2021"
+authors = [
+  "Jeffrey McAteer <jeffrey-imabot@jmcateer.com>"
+]
+
+
+
+[dependencies]
+#tray-icon = "0.14"
+#ocrs = "0.8"
+
+#[dependencies.scap]
+#version = "0.0.5"
+#git = "https://github.com/helmerapp/scap.git"
+#git = "https://github.com/MAlba124/scap.git" # TODO swap me back when merged upstream
+
+
+
