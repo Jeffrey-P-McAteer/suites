@@ -6,9 +6,14 @@
 
 # OS Runtime Dependencies
 
- - Linux
-    - `gtk3 xdotool libappindicator-gtk3`
+All operating systems: `qemu-system-x86_64[.exe]` must be available on the system `PATH`.
 
+
+# General Design
+
+`suites.exe` takes in a `.toml` file of configuration. Using this information it sets up and
+runs `qemu-system-x86_64.exe` to virtualize a PC (hereafter the "VM Under Test (VUT)").
+The VM Under Test
 
 
 # Research / exploration ideas
