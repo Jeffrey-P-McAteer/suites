@@ -4,7 +4,6 @@ use port_scanner::scan_ports_range;
 
 use std::process::Command;
 
-
 pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
 
   let mut free_qmp_port_num: u16 = 4000;
@@ -30,7 +29,7 @@ pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
         "-machine", "type=pc,accel=kvm,kernel_irqchip=on",
         "-nic", "user,id=winnet0,id=mynet0,net=192.168.90.0/24,dhcpstart=192.168.90.10",
         "-net", "nic,model=virtio",
-        "-boot", "c",
+        //"-boot", "c",
         "-vga", "virtio",
         "-display", "gtk,gl=on",
         "-qmp", "tcp:localhost:4444,server,wait=on"
@@ -42,7 +41,7 @@ pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 pub fn control_vm_t(free_qmp_port_num: u16) {
-  use qapi::{qga, Qga};
+  use qapi::{qga, Qga, qmp, Qmp};
   let socket_addr = format!("127.0.0.1:{}", free_qmp_port_num);
   loop {
     std::thread::sleep(std::time::Duration::from_millis(250));
@@ -53,6 +52,27 @@ pub fn control_vm_t(free_qmp_port_num: u16) {
       Ok(tcp_socket) => {
         eprintln!("Found QEMU at {:?}", &socket_addr);
 
+        // QMP == QEMU Machine Protocol, allows us to modify hardware, send in keyboard events, etc.
+        let mut qmp = qapi::Qmp::from_stream(&tcp_socket);
+        let info = qmp.handshake().expect("handshake failed");
+        println!("QMP info: {:#?}", info);
+
+        let status = qmp.execute(&qmp::query_status { }).unwrap();
+        println!("VCPU status: {:#?}", status);
+
+        loop {
+            if let Err(e) = qmp.nop() {
+              eprintln!("e = {:?}", e);
+              break;
+            }
+            for event in qmp.events() {
+                println!("Got event: {:#?}", event);
+            }
+            std::thread::sleep(std::time::Duration::from_millis(1250));
+        }
+
+
+        /* // QGA == QEMU Guest API, requires guest OS to have software installed.
         let mut qga = qapi::Qga::from_stream(&tcp_socket);
 
         let sync_value = &tcp_socket as *const _ as usize as i32;
@@ -63,7 +83,7 @@ pub fn control_vm_t(free_qmp_port_num: u16) {
 
         let info = qga.execute(&qapi::qga::guest_info { }).unwrap();
         println!("Guest Agent version: {}", info.version);
-
+        */
 
         break;
       }
