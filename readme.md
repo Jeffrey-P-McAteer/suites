@@ -20,5 +20,6 @@ The VM Under Test
 
  - https://github.com/helmerapp/scap
  - https://github.com/robertknight/ocrs/tree/main/ocrs
-
+ - https://qemu-project.gitlab.io/qemu/interop/qemu-qmp-ref.html
+ - https://github.com/intel/KVMGT-qemu/blob/master/qmp-commands.hx
 
