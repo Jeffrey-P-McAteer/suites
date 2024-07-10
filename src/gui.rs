@@ -7,9 +7,14 @@ use std::process::Command;
 pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
 
   let mut free_qmp_port_num: u16 = 4000;
-  for open_port in scan_ports_range(4000..9000) {
-    free_qmp_port_num = open_port;
-    break;
+  for blocked_port_num in scan_ports_range(4000..9000) {
+    if free_qmp_port_num == blocked_port_num {
+      free_qmp_port_num = blocked_port_num + 1;
+    }
+    else {
+      // The selected port is free b/c we have not seen it from scan_ports_range() (which returns ports ALREADY IN USE)
+      break;
+    }
   }
   println!("Using port {:?} for controlling the VM", free_qmp_port_num);
 
@@ -18,10 +23,11 @@ pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
     control_vm_t(t_free_qmp_port_num);
   });
 
+  let qmp_arg = format!("tcp:127.0.0.1:{free_qmp_port_num},server,wait=on", free_qmp_port_num=free_qmp_port_num);
   Command::new("qemu-system-x86_64")
       .args([
         "-bios", "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd",
-        // "-drive", "format=qcow2,file=/mnt/scratch/vms/enice-win11/WinDev2401Eval.qcow2",
+        "-drive", "format=qcow2,file=/mnt/scratch/vms/enice-win11/WinDev2401Eval.qcow2",
         "-enable-kvm",
         "-m", "8200M",
         "-cpu", "host",
@@ -29,10 +35,10 @@ pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
         "-machine", "type=pc,accel=kvm,kernel_irqchip=on",
         "-nic", "user,id=winnet0,id=mynet0,net=192.168.90.0/24,dhcpstart=192.168.90.10",
         "-net", "nic,model=virtio",
-        //"-boot", "c",
+        "-boot", "c",
         "-vga", "virtio",
         "-display", "gtk,gl=on",
-        "-qmp", "tcp:localhost:4444,server,wait=on"
+        "-qmp", &qmp_arg
       ])
       .status()?;
 
@@ -54,11 +60,23 @@ pub fn control_vm_t(free_qmp_port_num: u16) {
 
         // QMP == QEMU Machine Protocol, allows us to modify hardware, send in keyboard events, etc.
         let mut qmp = qapi::Qmp::from_stream(&tcp_socket);
-        let info = qmp.handshake().expect("handshake failed");
+        let info = match qmp.handshake() {
+          Ok(i) => i,
+          Err(e) => {
+            eprintln!("qmp.handshake(): {:?}", e);
+            continue;
+          }
+        };
         println!("QMP info: {:#?}", info);
 
-        let status = qmp.execute(&qmp::query_status { }).unwrap();
-        println!("VCPU status: {:#?}", status);
+        match qmp.execute(&qmp::query_status { })  {
+          Ok(status) => {
+            println!("VCPU status: {:#?}", status);
+          }
+          Err(e) => {
+            eprintln!("qmp.execute(&qmp::query_status : {:?}", e);
+          }
+        }
 
         loop {
             if let Err(e) = qmp.nop() {
