@@ -11,4 +11,6 @@ authors = [
 [dependencies]
 port_scanner = "0.1"
 qapi = { version = "0.14", features = [ "qmp", "qapi-qga" ] }
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.7"
 

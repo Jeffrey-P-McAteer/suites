@@ -4,7 +4,29 @@ use port_scanner::scan_ports_range;
 
 use std::process::Command;
 
+use crate::structs::*;
+
 pub fn run_main() -> Result<(), Box<dyn std::error::Error>> {
+
+  // Read & parse the config toml to a struct
+  let toml_file_name = if let Some(toml_file_arg) = std::env::args().nth(1) {
+    toml_file_arg.to_string()
+  }
+  else if let Ok(toml_env_val) = std::env::var("SUITES_VM_TOML") {
+    toml_env_val.to_string()
+  }
+  else {
+    eprintln!("No suites VM .toml file given! Pass as arg1 or set the enrivonment variable SUITES_VM_TOML to the file describing your VM.");
+    return Ok(());
+  };
+
+  println!("Reading {:?}", toml_file_name);
+
+  let config_file_content = std::fs::read_to_string(toml_file_name)?;
+  let config: SuitesVM = toml::from_str(&config_file_content)?;
+
+  println!("config = {:?}", config);
+
 
   let mut free_qmp_port_num: u16 = 4000;
   for blocked_port_num in scan_ports_range(4000..9000) {

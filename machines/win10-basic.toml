@@ -1,0 +1,16 @@
+
+[metadata]
+name = "Windows 10 Basic"
+description = """
+A longer description used to describe work or details about the machine
+that would not fit in the name.
+"""
+pocs = [
+  "Jeffrey McAteer <imabot@jmcateer.pw"
+]
+
+[setup]
+
+
+[machine]
+
